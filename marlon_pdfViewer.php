@@ -7,12 +7,6 @@
 
 <!-- End of Head -->
 
-<!-- Start of Header -->
-
-<?php include('views/header.php'); ?>
-
-<!-- End of Header -->
-
 <!-- Start of Body -->
 
 <?php include("views/marlon_index_body.php"); ?>

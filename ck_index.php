@@ -7,12 +7,6 @@
 
 <!-- End of Head -->
 
-<!-- Start of Header -->
-
-<?php include('views/header.php'); ?>
-
-<!-- End of Header -->
-
 <!-- Start of Body -->
 
 <?php include("views/ck_tables.php"); ?>
@@ -22,6 +16,7 @@
 <!-- Start of Footer -->
 
 <?php include('views/footer.php'); ?>
+<script src="assets/js/ck_tables.js"></script>
 
 <!-- End of Footer -->
 

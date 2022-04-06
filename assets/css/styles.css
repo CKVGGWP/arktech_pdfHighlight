@@ -31,6 +31,19 @@
     z-index: 999;
 }
 
+.marked {
+    position: absolute;
+    background: dodgerblue;
+    opacity: 50%;
+    height: 0px;
+    width: 0px;
+    z-index: 999;
+}
+
+#coordinates {
+	opacity: 0;
+}
+
 .selected{
     animation: blink 1.3s infinite ease-in-out;
 }
