@@ -25,12 +25,11 @@ function renderPDF(url, canvasContainer) {
     const canvas = document.createElement("canvas");
 
     const ctx = canvas.getContext("2d");
-    var scale = 1.3;
+    var scale = 1.0;
     var viewport = page.getViewport({ scale: scale });
 
     canvas.width = viewport.width;
     canvas.height = viewport.height;
-    // canvas.style.width = '100%';
 
     canvas.style.transform = "scale(1,1)";
     canvas.style.transformOrigin = "0% 0%";
@@ -82,17 +81,23 @@ $(document).ready(function (e) {
     "../../../V4/cocprint/coc_documents/" + getParameterByName("docs"),
     document.getElementById("my_canvas")
   );
+
   selection();
+  setTimeout(function () {
+    displayCoordinates(cocDisplayId, pdfName);
+  }, 1100);
 
   $("#refresh").on("click", function () {
     location.reload();
   });
   // document.querySelector("#previous").addEventListener("click");
   // document.querySelector("#next").addEventListener("click");
-  // displayCoordinates(cocDisplayId, pdfName);
 
   $("#next").on("click", function () {
+    $(".pg" + page).addClass("d-none");
     page++;
+    $(".pg" + page).removeClass("d-none");
+
     $("#my_canvas div").last().remove();
     renderPDF(
       "../../../V4/cocprint/coc_documents/" + getParameterByName("docs"),
@@ -101,7 +106,10 @@ $(document).ready(function (e) {
   });
 
   $("#previous").on("click", function () {
+    $(".pg" + page).addClass("d-none");
     page--;
+    $(".pg" + page).removeClass("d-none");
+
     $("#my_canvas div").last().remove();
     renderPDF(
       "../../../V4/cocprint/coc_documents/" + getParameterByName("docs"),
@@ -109,6 +117,7 @@ $(document).ready(function (e) {
     );
   });
 });
+
 var count = 1;
 var l = "";
 var t = "";
@@ -127,7 +136,6 @@ function selection() {
   end = true;
   $("#my_canvas").on("mousedown touchstart", function (e) {
     e.preventDefault();
-
     $("#selection").show();
     var parentOffset = $(this).offset();
 
@@ -166,7 +174,7 @@ function selection() {
     if (first != second) {
       if (firstCoord.length < 5) {
         $("#selection").after(
-          '<div class="selected" id="select' + count + '"></div>'
+          '<div class="selected pg' + page + '" id="select' + count + '"></div>'
         );
 
         $("#select" + count)
@@ -175,6 +183,7 @@ function selection() {
           .css("width", w)
           .css("height", h);
 
+        // alert("START: " + first + " - END: " + second);
         firstCoord.push(first);
         secondCoord.push(second);
         pageNum.push(page);
@@ -270,9 +279,19 @@ function displayCoordinates(cocDisplayId, pdfName) {
           var width = x2 > x1 ? x2 - x1 : x1 - x2;
           var height = y2 > y1 ? y2 - y1 : y1 - y2;
 
-          $("#selection").after(
-            '<div class="marked" id="select' + i + '"></div>'
-          );
+          if (pg != 1) {
+            $("#selection").after(
+              '<div class="marked pg' +
+                pg +
+                ' d-none" id="select' +
+                i +
+                '"></div>'
+            );
+          } else {
+            $("#selection").after(
+              '<div class="marked pg' + pg + '" id="select' + i + '"></div>'
+            );
+          }
 
           $("#select" + i)
             .css("margin-left", left + "px")
