@@ -12,49 +12,72 @@ function getParameterByName(name, url) {
 
 let cocDisplayId = getParameterByName("cocid");
 let pdfName = getParameterByName("docs");
+let pageNumber = getParameterByName("page");
 
 //MARLON HIGHLIGHT PDF SCRIPT START
 var pdfjsLib = window["pdfjs-dist/build/pdf"];
 $("#selection").hide();
-$(document).ready(function (e) {
-  function renderPDF(url, canvasContainer) {
-    function renderPage(page) {
-      const canvas = document.createElement("canvas");
 
-      const ctx = canvas.getContext("2d");
-      var scale = 1.3;
-      var viewport = page.getViewport({ scale: scale });
+let page = 1;
 
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      // canvas.style.width = '100%';
+function renderPDF(url, canvasContainer) {
+  function renderPage(page) {
+    const canvas = document.createElement("canvas");
 
-      canvas.style.transform = "scale(1,1)";
-      canvas.style.transformOrigin = "0% 0%";
+    const ctx = canvas.getContext("2d");
+    var scale = 1.3;
+    var viewport = page.getViewport({ scale: scale });
 
-      const canvasWrapper = document.createElement("div");
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    // canvas.style.width = '100%';
 
-      canvasWrapper.appendChild(canvas);
+    canvas.style.transform = "scale(1,1)";
+    canvas.style.transformOrigin = "0% 0%";
 
-      const renderContext = {
-        canvasContext: ctx,
-        viewport,
-      };
+    var canvasWrapper = document.createElement("div");
 
-      canvasContainer.appendChild(canvasWrapper);
+    canvasWrapper.appendChild(canvas);
 
-      page.render(renderContext);
-    }
+    const renderContext = {
+      canvasContext: ctx,
+      viewport,
+    };
 
-    function renderPages(pdfDoc) {
-      for (let num = 1; num <= pdfDoc.numPages; num += 1)
-        pdfDoc.getPage(num).then(renderPage);
-    }
+    canvasContainer.appendChild(canvasWrapper);
 
-    pdfjsLib.disableWorker = true;
-    pdfjsLib.getDocument(url).promise.then(renderPages);
+    page.render(renderContext);
   }
 
+  function renderPages(pdfDoc) {
+    // for (let num = 1; num <= pdfDoc.numPages; num += 1)
+    pdfDoc.getPage(page).then(renderPage);
+
+    if (page === pdfDoc.numPages) {
+      $("#next").attr("disabled", true);
+      $("#next").text("End of Document");
+    } else {
+      $("#next").attr("disabled", false);
+      $("#next").text("Next Page");
+    }
+
+    if (page === 1) {
+      $("#previous").attr("disabled", true);
+      $("#previous").text("Start of Document");
+    } else {
+      $("#previous").attr("disabled", false);
+      $("#previous").text("Previous Page");
+    }
+
+    var pageNumber = document.getElementById("pages");
+    pageNumber.innerHTML = "Page " + page + " of " + pdfDoc.numPages;
+  }
+
+  pdfjsLib.disableWorker = true;
+  pdfjsLib.getDocument(url).promise.then(renderPages);
+}
+
+$(document).ready(function (e) {
   renderPDF(
     "../../../V4/cocprint/coc_documents/" + getParameterByName("docs"),
     document.getElementById("my_canvas")
@@ -64,10 +87,28 @@ $(document).ready(function (e) {
   $("#refresh").on("click", function () {
     location.reload();
   });
+  // document.querySelector("#previous").addEventListener("click");
+  // document.querySelector("#next").addEventListener("click");
+  // displayCoordinates(cocDisplayId, pdfName);
 
-  displayCoordinates(cocDisplayId, pdfName);
+  $("#next").on("click", function () {
+    page++;
+    $("#my_canvas div").last().remove();
+    renderPDF(
+      "../../../V4/cocprint/coc_documents/" + getParameterByName("docs"),
+      document.getElementById("my_canvas")
+    );
+  });
+
+  $("#previous").on("click", function () {
+    page--;
+    $("#my_canvas div").last().remove();
+    renderPDF(
+      "../../../V4/cocprint/coc_documents/" + getParameterByName("docs"),
+      document.getElementById("my_canvas")
+    );
+  });
 });
-
 var count = 1;
 var l = "";
 var t = "";
@@ -78,6 +119,7 @@ var first = "";
 var second = "";
 var firstCoord = [];
 var secondCoord = [];
+var pageNum = [];
 
 var x1, x2, y1, y2, end;
 
@@ -85,6 +127,7 @@ function selection() {
   end = true;
   $("#my_canvas").on("mousedown touchstart", function (e) {
     e.preventDefault();
+
     $("#selection").show();
     var parentOffset = $(this).offset();
 
@@ -132,9 +175,9 @@ function selection() {
           .css("width", w)
           .css("height", h);
 
-        // alert("START: " + first + " - END: " + second);
         firstCoord.push(first);
         secondCoord.push(second);
+        pageNum.push(page);
 
         count++;
       } else {
@@ -145,15 +188,6 @@ function selection() {
         });
       }
     }
-  });
-
-  $("#save").on("click", function () {
-    var insertion = insertCoordinates(
-      firstCoord,
-      secondCoord,
-      getParameterByName("cocid")
-    );
-    console.log(insertion);
   });
 
   $("#my_canvas").on("mousemove touchmove", function (e) {
@@ -195,6 +229,7 @@ function getCoordinates(a) {
   var z = x + " , " + y;
   $("#coordinates").text(z);
 }
+
 //MARLON HIGHLIGHT PDF SCRIPT END
 
 function displayCoordinates(cocDisplayId, pdfName) {
@@ -215,10 +250,12 @@ function displayCoordinates(cocDisplayId, pdfName) {
         let y1 = coordinatesArray[1];
         let x2 = coordinatesArray[2];
         let y2 = coordinatesArray[3];
+        let pg = coordinatesArray[4];
         //////////////////////////////////////////////////////////firstCoo
         if (x1 != "" && y1 != "" && x2 != "" && y2 != "") {
           firstCoord.push(x1 + "," + y1);
           secondCoord.push(x2 + "," + y2);
+          pageNum.push(pg);
         }
         /////////////////////////////////////////////////////////////////
         if (coordinates[i] != "") {
@@ -247,6 +284,19 @@ function displayCoordinates(cocDisplayId, pdfName) {
     },
   });
 }
+
+//MOVED BY VAL
+$("#save").on("click", function () {
+  $(this).html("Saving...");
+  $(this).blur();
+  var insertion = insertCoordinates(
+    firstCoord,
+    secondCoord,
+    getParameterByName("cocid"),
+    pageNum
+  );
+  console.log(insertion);
+});
 
 $("#reset").on("click", function () {
   Swal.fire({

@@ -1,5 +1,5 @@
 //Create a function for AJAX requests
-function insertCoordinates(first, second, cocId) {
+function insertCoordinates(first, second, cocId, pageNum) {
   $.ajax({
     type: "POST",
     url: "controllers/val_highlightPDFController.php",
@@ -8,6 +8,7 @@ function insertCoordinates(first, second, cocId) {
       cocId: cocId,
       first: first,
       second: second,
+      pageNum: pageNum,
     },
     success: function (data) {
       console.log(data);
