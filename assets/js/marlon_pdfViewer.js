@@ -18,6 +18,8 @@ let pageNumber = getParameterByName("page");
 var pdfjsLib = window["pdfjs-dist/build/pdf"];
 $("#selection").hide();
 
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.js';
+
 let page = 1;
 
 function renderPDF(url, canvasContainer) {
@@ -82,10 +84,10 @@ $(document).ready(function (e) {
     document.getElementById("my_canvas")
   );
 
-  selection();
-  setTimeout(function () {
-    displayCoordinates(cocDisplayId, pdfName);
-  }, 1100);
+	selection();
+ 	setTimeout(function () {
+		displayCoordinates(cocDisplayId, pdfName);
+  	}, 1100);
 
   $("#refresh").on("click", function () {
     location.reload();
@@ -94,10 +96,10 @@ $(document).ready(function (e) {
   // document.querySelector("#next").addEventListener("click");
 
   $("#next").on("click", function () {
-    $(".pg" + page).addClass("d-none");
+    $(".pg"+page).addClass("d-none");
     page++;
-    $(".pg" + page).removeClass("d-none");
-
+    $(".pg"+page).removeClass("d-none");
+  
     $("#my_canvas div").last().remove();
     renderPDF(
       "../../../V4/cocprint/coc_documents/" + getParameterByName("docs"),
@@ -106,10 +108,10 @@ $(document).ready(function (e) {
   });
 
   $("#previous").on("click", function () {
-    $(".pg" + page).addClass("d-none");
+    $(".pg"+page).addClass("d-none");
     page--;
-    $(".pg" + page).removeClass("d-none");
-
+    $(".pg"+page).removeClass("d-none");
+  
     $("#my_canvas div").last().remove();
     renderPDF(
       "../../../V4/cocprint/coc_documents/" + getParameterByName("docs"),
@@ -117,6 +119,7 @@ $(document).ready(function (e) {
     );
   });
 });
+
 
 var count = 1;
 var l = "";
@@ -139,7 +142,8 @@ function selection() {
     $("#selection").show();
     var parentOffset = $(this).offset();
 
-    first = $("#coordinates").text();
+    // first = $("#coordinates").text();
+  	first = e.pageX + "," + e.pageY;
     if (typeof e.originalEvent.targetTouches != "undefined") {
       e = e.originalEvent.targetTouches[0];
     }
@@ -151,7 +155,8 @@ function selection() {
 
   $("#my_canvas").on("mouseup touchend", function (e) {
     e.preventDefault();
-    second = $("#coordinates").text();
+    // second = $("#coordinates").text();
+    second = e.pageX + "," + e.pageY;
     $("#selection").hide();
 
     var parentOffset = $(this).offset();
@@ -162,7 +167,8 @@ function selection() {
     t = y2 > y1 ? y1 : y2;
     w = x2 > x1 ? x2 - x1 : x1 - x2;
     h = y2 > y1 ? y2 - y1 : y1 - y2;
-
+    
+  
     end = true;
 
     $("#selection")
@@ -174,7 +180,7 @@ function selection() {
     if (first != second) {
       if (firstCoord.length < 5) {
         $("#selection").after(
-          '<div class="selected pg' + page + '" id="select' + count + '"></div>'
+          '<div class="selected pg'+page+'" id="select' + count + '"></div>'
         );
 
         $("#select" + count)
@@ -268,6 +274,7 @@ function displayCoordinates(cocDisplayId, pdfName) {
         }
         /////////////////////////////////////////////////////////////////
         if (coordinates[i] != "") {
+        
           var parentOffset = $("#my_canvas").offset();
           x1 = x1 - parentOffset.left;
           y1 = y1 - parentOffset.top;
@@ -278,19 +285,15 @@ function displayCoordinates(cocDisplayId, pdfName) {
           var top = y2 > y1 ? y1 : y2;
           var width = x2 > x1 ? x2 - x1 : x1 - x2;
           var height = y2 > y1 ? y2 - y1 : y1 - y2;
-
-          if (pg != 1) {
-            $("#selection").after(
-              '<div class="marked pg' +
-                pg +
-                ' d-none" id="select' +
-                i +
-                '"></div>'
-            );
-          } else {
-            $("#selection").after(
-              '<div class="marked pg' + pg + '" id="select' + i + '"></div>'
-            );
+		  
+          if(pg!=1){
+          	$("#selection").after(
+            	'<div class="marked pg'+pg+' d-none" id="select' + i + '"></div>'
+          	);
+          }else{
+          	$("#selection").after(
+            	'<div class="marked pg'+pg+'" id="select' + i + '"></div>'
+          	);
           }
 
           $("#select" + i)

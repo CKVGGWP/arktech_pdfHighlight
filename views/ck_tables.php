@@ -28,11 +28,11 @@
                                     <th class="text-wrap text-center">Employee ID</th>
                                     <th class="text-wrap text-center">Identifier</th>
                                     <th class="text-wrap text-center">Doc 2</th>
-                                    <th class="text-wrap text-center">Highlight 1</th>
+<!--                                     <th class="text-wrap text-center">Highlight 1</th>
                                     <th class="text-wrap text-center">Highlight 2</th>
                                     <th class="text-wrap text-center">Highlight 3</th>
                                     <th class="text-wrap text-center">Highlight 4</th>
-                                    <th class="text-wrap text-center">Highlight 5</th>
+                                    <th class="text-wrap text-center">Highlight 5</th> -->
                                     <th class="text-wrap text-center">Actions</th>
                                 </tr>
                             </thead>

@@ -36,11 +36,11 @@ class PDFViewer extends Database
                     $employeeId,
                     $identifier,
                     $doc2,
-                    $highlight1,
-                    $highlight2,
-                    $highlight3,
-                    $highlight4,
-                    $highlight5,
+                    // $highlight1,
+                    // $highlight2,
+                    // $highlight3,
+                    // $highlight4,
+                    // $highlight5,
                     $buttons
                 ];
                 $totalData++;

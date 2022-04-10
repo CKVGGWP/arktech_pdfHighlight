@@ -5,7 +5,7 @@ require("../models/val_highlightPDF.php");
 
 $highlightPDF = new HighlightPDF();
 
-if (isset($_POST['insertHighlight'])) {
+if(isset($_POST['insertHighlight'])){
 	$firstCoordinate = $_POST['first'];
 	$secondCoordinate = $_POST['second'];
 	$cocId = $_POST['cocId'];
@@ -14,3 +14,4 @@ if (isset($_POST['insertHighlight'])) {
 	echo ($insertHighlight);
 	// echo $firstCoordinate;
 }
+

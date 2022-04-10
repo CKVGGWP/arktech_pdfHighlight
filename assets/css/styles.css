@@ -41,7 +41,7 @@
 }
 
 #coordinates {
-	opacity: 0;
+	display:none;
 }
 
 .selected{
